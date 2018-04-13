@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.xuepeng.trade.dao.impl.OrderInfoDaoImpl">
+
+    <sql id="table_name"> order_info </sql>
+
+    <sql id="column_list"> id, order_id, order_status, order_amount, customer_id, merchant_id, create_time, modify_time </sql>
+
+    <sql id="condition_sql">
+        <if test="orderId != null and orderId != ''">and order_id = #{orderId}</if>
+        <if test="orderStatus != null and orderStatus != ''">and order_status = #{orderStatus}</if>
+    </sql>
+
+    <resultMap id="resultMap" type="OrderInfo">
+        <id column="id" property="id"></id>
+        <result column="order_id" property="orderId"></result>
+        <result column="order_status" property="orderStatus"></result>
+        <result column="order_amount" property="orderAmount"></result>
+        <result column="customer_id" property="customerId"></result>
+        <result column="merchant_id" property="merchantId"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="modify_time" property="modifyTime"></result>
+    </resultMap>
+
+    <insert id="insert" parameterType="OrderInfo">
+        insert into
+        <include refid="table_name"/>
+        (<include refid="column_list"/>)
+        values
+        (#{id}, #{orderId}, #{orderStatus}, #{orderAmount},
+        #{customerId}, #{merchantId}, #{createTime}, #{modifyTime})
+    </insert>
+
+    <update id="update" parameterType="OrderInfo">
+        update
+        <include refid="table_name"/>
+        <set>
+            order_status = #{orderStatus},
+            order_amount = #{orderAmount},
+            customer_id = #{customerId},
+            merchant_id = #{merchantId},
+            create_time = #{createTime},
+            modify_time = #{modifyTime}
+        </set>
+        <where>order_id = #{orderId}</where>
+    </update>
+
+    <delete id="deleteByIds" parameterType="String">
+        delete from
+        <include refid="table_name"/>
+        <where>
+            order_id
+            <foreach collection="array" item="id" open="in (" close=")"
+                     separator=",">
+                #{orderId}
+            </foreach>
+        </where>
+    </delete>
+
+    <select id="findById" resultMap="resultMap" parameterType="java.lang.String">
+        select
+        <include refid="column_list"/>
+        from
+        <include refid="table_name"/>
+        <where>
+            order_id = #{orderId}
+        </where>
+    </select>
+
+    <select id="findByParam" resultMap="resultMap" parameterType="java.util.Map">
+        select
+        <include refid="column_list"/>
+        from
+        <include refid="table_name"/>
+        <where>
+            <include refid="condition_sql"/>
+        </where>
+    </select>
+
+    <select id="listByParam" resultMap="resultMap" parameterType="java.util.Map">
+        select
+        <include refid="column_list"/>
+        from
+        <include refid="table_name"/>
+        <where>
+            <include refid="condition_sql"/>
+        </where>
+    </select>
+
+    <select id="listByPageAndParam" resultMap="resultMap" parameterType="java.util.Map">
+        select
+        <include refid="column_list"/>
+        from
+        <include refid="table_name"/>
+        <where>
+            <include refid="condition_sql"/>
+        </where>
+    </select>
+
+    <select id="countByParam" resultType="java.lang.Long" parameterType="java.util.Map">
+        select count(0) from
+        <include refid="table_name"/>
+        <where>
+            <include refid="condition_sql"/>
+        </where>
+    </select>
+
+</mapper>

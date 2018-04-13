@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.xuepeng.transaction.message.dao.impl.TransactionMessageDaoImpl">
+
+    <sql id="table_name"> transaction_message </sql>
+
+    <sql id="column_list"> id, message_id, message_body, message_status, is_dead, resend_time, consumer_queue, create_time, modify_time </sql>
+
+    <sql id="condition_sql">
+        <if test="messageId != null and messageId != ''">and message_id = #{messageId}</if>
+        <if test="messageStatus != null and messageStatus != ''">and message_status = #{messageStatus}</if>
+        <if test="isDead != null and isDead != ''">and is_dead = #{isDead}</if>
+        <if test="consumerQueue != null and consumerQueue != ''">and consumer_queue = #{consumerQueue}</if>
+    </sql>
+
+    <resultMap id="resultMap" type="TransactionMessage">
+        <id column="id" property="id"></id>
+        <result column="message_id" property="messageId"></result>
+        <result column="message_body" property="messageBody"></result>
+        <result column="message_status" property="messageStatus"></result>
+        <result column="is_dead" property="isDead"></result>
+        <result column="resend_time" property="reSendTime"></result>
+        <result column="consumer_queue" property="consumerQueue"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="modify_time" property="modifyTime"></result>
+    </resultMap>
+
+    <insert id="insert" parameterType="TransactionMessage">
+        insert into
+        <include refid="table_name"/>
+        (<include refid="column_list"/>)
+        values
+        (#{id}, #{messageId}, #{messageBody}, #{messageStatus},
+        #{isDead}, #{reSendTime}, #{consumerQueue}, #{createTime}, #{modifyTime})
+    </insert>
+
+    <update id="update" parameterType="TransactionMessage">
+        update
+        <include refid="table_name"/>
+        <set>
+            message_body = #{messageBody},
+            message_status = #{messageStatus},
+            is_dead = #{isDead},
+            resend_time = #{reSendTime},
+            consumer_queue = #{consumerQueue},
+            create_time = #{createTime},
+            modify_time = #{modifyTime}
+        </set>
+        <where>message_id = #{messageId}</where>
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+        delete from
+        <include refid="table_name"/>
+        <where>
+            message_id = #{messageId}
+        </where>
+    </delete>
+
+    <delete id="deleteByIds" parameterType="String">
+        delete from
+        <include refid="table_name"/>
+        <where>
+            message_id
+            <foreach collection="array" item="id" open="in (" close=")"
+                     separator=",">
+                #{messageId}
+            </foreach>
+        </where>
+    </delete>
+
+    <select id="findById" resultMap="resultMap" parameterType="java.lang.String">
+        select
+        <include refid="column_list"/>
+        from
+        <include refid="table_name"/>
+        <where>
+            message_id = #{messageId}
+        </where>
+    </select>
+
+    <select id="findByParam" resultMap="resultMap" parameterType="java.util.Map">
+        select
+        <include refid="column_list"/>
+        from
+        <include refid="table_name"/>
+        <where>
+            <include refid="condition_sql"/>
+        </where>
+    </select>
+
+    <select id="listByParam" resultMap="resultMap" parameterType="java.util.Map">
+        select
+        <include refid="column_list"/>
+        from
+        <include refid="table_name"/>
+        <where>
+            <include refid="condition_sql"/>
+        </where>
+    </select>
+
+    <select id="listByPageAndParam" resultMap="resultMap" parameterType="java.util.Map">
+        select
+        <include refid="column_list"/>
+        from
+        <include refid="table_name"/>
+        <where>
+            <include refid="condition_sql"/>
+        </where>
+    </select>
+
+    <select id="countByParam" resultType="java.lang.Long" parameterType="java.util.Map">
+        select count(0) from
+        <include refid="table_name"/>
+        <where>
+            <include refid="condition_sql"/>
+        </where>
+    </select>
+
+</mapper>

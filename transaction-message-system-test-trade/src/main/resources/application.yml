@@ -1,0 +1,25 @@
+server:
+  port: 8081
+spring:
+  #数据库配置信息
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/transaction-message-order?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&useSSL=false
+    username: root
+    password: root
+    dbcp2: #dbcp2连接池配置
+      initial-size: 1 #连接初始值，默认值是0
+      min-idle: 3 #最小空闲值，默认值是0
+      max-idle: 20 #最大空闲值，默认值是8
+      max-total: 200 #连接池的最大值，0时无限制，默认值是8
+      max-wait-millis: 60000 #从池获取连接的最大等待时间（毫秒）
+      default-query-timeout: 3000 #查询超时（毫秒）
+#mybatis配置信息
+mybatis:
+  config-location: classpath:mybatis-config.xml #配置文件地址
+  mapper-locations: classpath:mapper/*.xml #mapper文件地址
+  type-aliases-package: cc.xuepeng.trade.entity #实体类默认包
+#
+restTemplate:
+  connectTimeout: 5000
+  readTimeout: 3000
