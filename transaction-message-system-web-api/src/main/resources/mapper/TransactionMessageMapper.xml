@@ -117,4 +117,13 @@
         </where>
     </select>
 
+    <!-- 自定义 -->
+    <select id="getAliveMessageId" resultType="java.lang.String">
+        select message_id from
+        <include refid="table_name"/>
+        <where>
+            is_dead = 0
+        </where>
+    </select>
+
 </mapper>

@@ -36,6 +36,10 @@ mybatis:
   config-location: classpath:mybatis-config.xml #配置文件地址
   mapper-locations: classpath:mapper/*.xml #mapper文件地址
   type-aliases-package: cc.xuepeng.transaction.message.entity #实体类默认包
+#HTTP网络请求配置信息
+restTemplate:
+  connectTimeout: 5000
+  readTimeout: 3000
 transactionMessage:
   maxSentTime: 5
   batchSize: 50

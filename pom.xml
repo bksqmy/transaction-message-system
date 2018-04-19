@@ -10,7 +10,6 @@
         <module>transaction-message-system-common</module>
         <module>transaction-message-system-core</module>
         <module>transaction-message-system-web-api</module>
-        <module>transaction-message-system-monitor</module>
         <module>transaction-message-system-test-trade</module>
         <module>transaction-message-system-test-account</module>
     </modules>
