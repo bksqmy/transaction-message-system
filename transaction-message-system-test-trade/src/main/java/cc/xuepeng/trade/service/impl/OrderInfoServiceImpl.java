@@ -6,6 +6,8 @@ import cc.xuepeng.trade.service.OrderInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 订单信息的服务类。
  *
@@ -30,6 +32,17 @@ public final class OrderInfoServiceImpl implements OrderInfoService {
     public boolean createOrder(OrderInfo orderInfo) {
         int result = orderInfoDao.insert(orderInfo);
         return result > 0;
+    }
+
+    /**
+     * 根据多个MessageId查询OrderId。
+     *
+     * @param messageIds 消息主键的数组。
+     * @return OrderId的集合。
+     */
+    @Override
+    public List<String> getOrderIdsByMessageIds(String... messageIds) {
+        return orderInfoDao.getOrderIdsByMessageIds(messageIds);
     }
 
 }

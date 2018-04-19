@@ -45,12 +45,12 @@
         <where>order_id = #{orderId}</where>
     </update>
 
-    <delete id="deleteByIds" parameterType="String">
+    <delete id="deleteByIds" parameterType="java.lang.String">
         delete from
         <include refid="table_name"/>
         <where>
             order_id
-            <foreach collection="array" item="id" open="in (" close=")"
+            <foreach collection="array" item="orderId" open="in (" close=")"
                      separator=",">
                 #{orderId}
             </foreach>
@@ -67,7 +67,21 @@
         </where>
     </select>
 
-    <select id="findByParam" resultMap="resultMap" parameterType="java.util.Map">
+    <select id="findByIds" resultMap="resultMap" parameterType="java.lang.String">
+        select
+        <include refid="column_list"/>
+        from
+        <include refid="table_name"/>
+        <where>
+            order_id
+            <foreach collection="array" item="orderId" open="in (" close=")"
+                     separator=",">
+                #{orderId}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="findByParam" resultMap="resultMap" parameterType="String">
         select
         <include refid="column_list"/>
         from
@@ -102,6 +116,18 @@
         <include refid="table_name"/>
         <where>
             <include refid="condition_sql"/>
+        </where>
+    </select>
+
+    <select id="getOrderIdsByMessageIds" resultType="java.lang.String" parameterType="java.lang.String">
+        select order_id from
+        <include refid="table_name"/>
+        <where>
+            order_id
+            <foreach collection="array" item="orderId" open="in (" close=")"
+                     separator=",">
+                #{orderId}
+            </foreach>
         </where>
     </select>
 

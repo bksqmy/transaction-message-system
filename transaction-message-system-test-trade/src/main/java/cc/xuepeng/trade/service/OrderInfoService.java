@@ -2,6 +2,8 @@ package cc.xuepeng.trade.service;
 
 import cc.xuepeng.trade.entity.OrderInfo;
 
+import java.util.List;
+
 /**
  * 订单信息的服务接口。
  *
@@ -16,5 +18,13 @@ public interface OrderInfoService {
      * @return 是否创建成功。
      */
     boolean createOrder(OrderInfo orderInfo);
+
+    /**
+     * 根据多个MessageId查询OrderId。
+     *
+     * @param messageIds 消息主键的数组。
+     * @return OrderId的集合。
+     */
+    List<String> getOrderIdsByMessageIds(String... messageIds);
 
 }

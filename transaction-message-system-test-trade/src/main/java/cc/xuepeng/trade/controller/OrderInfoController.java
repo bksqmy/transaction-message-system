@@ -5,16 +5,19 @@ import cc.xuepeng.trade.enums.OrderStatus;
 import cc.xuepeng.trade.service.OrderInfoService;
 import cc.xuepeng.transaction.message.common.entity.ResultEntity;
 import cc.xuepeng.transaction.message.common.enums.ResultStatus;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -36,6 +39,8 @@ public class OrderInfoController {
     @Autowired
     private OrderInfoService orderInfoService;
 
+    private static final String MESSAGE_ID_PROPNAME = "messageId";
+
     /**
      * 支付订单的回调函数（一般是由第三方支付平台发起的回调）。
      *
@@ -51,6 +56,22 @@ public class OrderInfoController {
         return new ResultEntity.Builder(ResultStatus.OK).build();
     }
 
+    @PostMapping("/order/status")
+    public ResultEntity orderStatus(@RequestBody List<String> messageIds) {
+        List<String> orderIds = orderInfoService.getOrderIdsByMessageIds(messageIds.toArray(new String[messageIds.size()]));
+        JSONArray result = new JSONArray();
+        for (String messageId : messageIds) {
+            JSONObject obj = new JSONObject();
+            obj.put(MESSAGE_ID_PROPNAME, messageId);
+            if (orderIds.contains(messageId)) {
+                obj.put("state", "resend"); // 未消费成功，需要重发
+            } else {
+                obj.put("state", "delete"); // 只经过的presave，可以删除
+            }
+            result.add(obj);
+        }
+        return new ResultEntity.Builder(ResultStatus.OK).data(result).build();
+    }
 
     /**
      * @return 生成一个测试用的订单。
@@ -76,7 +97,7 @@ public class OrderInfoController {
      */
     private boolean presave(OrderInfo orderInfo) {
         JSONObject param = new JSONObject();
-        param.put("messageId", orderInfo.getOrderId());
+        param.put(MESSAGE_ID_PROPNAME, orderInfo.getOrderId());
         param.put("messageBody", JSONObject.toJSONString(orderInfo));
         param.put("consumerQueue", "order");
         ResponseEntity<String> result = restTemplate.postForEntity("http://localhost:8080/transaction-message/message/presave", param, String.class);
@@ -90,7 +111,7 @@ public class OrderInfoController {
      */
     private void save(OrderInfo orderInfo) {
         JSONObject param = new JSONObject();
-        param.put("messageId", orderInfo.getOrderId());
+        param.put(MESSAGE_ID_PROPNAME, orderInfo.getOrderId());
         restTemplate.postForEntity("http://localhost:8080/transaction-message/message/save", param, String.class);
     }
 
