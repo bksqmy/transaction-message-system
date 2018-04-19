@@ -7,6 +7,8 @@ import cc.xuepeng.transaction.message.service.TransactionMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 可靠消息的Controller对象，对外暴露WebAPI。
  *
@@ -139,8 +141,14 @@ public class TransactionMessageController {
      */
     @PostMapping("/message/delete")
     public ResultEntity deleteById(@RequestBody TransactionMessage message) {
-        transactionMessageService.deleteById(message.getMessageId());
+        transactionMessageService.deleteByMessageId(message.getMessageId());
         return new ResultEntity.Builder(ResultStatus.OK).msg("删除消息成功。").build();
+    }
+
+    @GetMapping("/message/alive")
+    public ResultEntity getAliveMessageId() {
+        List<String> result = transactionMessageService.getAliveMessageId();
+        return new ResultEntity.Builder(ResultStatus.OK).data(result).build();
     }
 
 }

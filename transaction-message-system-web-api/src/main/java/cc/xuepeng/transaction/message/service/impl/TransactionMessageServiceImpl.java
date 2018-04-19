@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -236,11 +237,21 @@ public class TransactionMessageServiceImpl implements TransactionMessageService 
      * @param messageId 消息Id。
      */
     @Override
-    public void deleteById(String messageId) {
+    public void deleteByMessageId(String messageId) {
         if (StringUtils.isEmpty(messageId)) {
             throw new NullPointerException(TIP_MESSAGE_ID_NULL);
         }
         transactionMessageDao.deleteById(messageId);
+    }
+
+    /**
+     * 获得存货的消息Id。
+     *
+     * @return 消息Id的集合。
+     */
+    @Override
+    public List<String> getAliveMessageId() {
+        return transactionMessageDao.getAliveMessageId();
     }
 
 }

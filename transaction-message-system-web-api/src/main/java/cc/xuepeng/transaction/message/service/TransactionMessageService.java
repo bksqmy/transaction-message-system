@@ -2,6 +2,8 @@ package cc.xuepeng.transaction.message.service;
 
 import cc.xuepeng.transaction.message.entity.TransactionMessage;
 
+import java.util.List;
+
 /**
  * 可靠消息服务接口。
  *
@@ -73,6 +75,13 @@ public interface TransactionMessageService {
      *
      * @param messageId 消息Id。
      */
-    void deleteById(String messageId);
+    void deleteByMessageId(String messageId);
+
+    /**
+     * 获得存货的消息Id。
+     *
+     * @return 消息Id的集合。
+     */
+    List<String> getAliveMessageId();
 
 }
