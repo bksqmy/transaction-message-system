@@ -43,6 +43,10 @@ public abstract class BaseDaoImpl<T extends BaseEntity> extends SqlSessionDaoSup
      */
     private static final String SQL_FIND_BY_ID = "findById";
     /**
+     * 根据多个主键查找。
+     */
+    private static final String SQL_FIND_BY_IDS = "findByIds";
+    /**
      * 根据参数查找。
      */
     private static final String SQL_FIND_BY_PARAM = "findByParam";
@@ -70,7 +74,7 @@ public abstract class BaseDaoImpl<T extends BaseEntity> extends SqlSessionDaoSup
     /**
      * @return 获得一个SqlSessionTemplate对象。
      */
-    public SqlSessionTemplate getSessionTemplate() {
+    protected SqlSessionTemplate getSessionTemplate() {
         return this.sessionTemplate;
     }
 
@@ -155,6 +159,16 @@ public abstract class BaseDaoImpl<T extends BaseEntity> extends SqlSessionDaoSup
         // 对数据库进行查询操作。
         // 执行Mapper配置文件中的findById方法。
         return sessionTemplate.selectOne(getStatement(SQL_FIND_BY_ID), id);
+    }
+
+    /**
+     * 根据主键查找实体对象。
+     *
+     * @param ids 实体对象的主键。
+     * @return 实体对象的集合。
+     */
+    public List<T> findByIds(String... ids) {
+        return sessionTemplate.selectList(getStatement(SQL_FIND_BY_IDS), ids);
     }
 
     /**
@@ -246,10 +260,8 @@ public abstract class BaseDaoImpl<T extends BaseEntity> extends SqlSessionDaoSup
      * @return 全路径的方法名称。
      */
     protected String getStatement(String sqlId) {
-        String name = this.getClass().getName();
-        StringBuilder sb = new StringBuilder();
-        sb.append(name).append(".").append(sqlId);
-        return sb.toString();
+        StringBuilder statement = new StringBuilder(this.getClass().getName()).append('.').append(sqlId);
+        return statement.toString();
     }
 
 }

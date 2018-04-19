@@ -56,6 +56,14 @@ public interface BaseDao<T extends BaseEntity> {
     T findById(String id);
 
     /**
+     * 根据主键查找实体对象。
+     *
+     * @param ids 实体对象的主键。
+     * @return 实体对象的集合。
+     */
+    List<T> findByIds(String... ids);
+
+    /**
      * 根据查询条件来查找实体对象。
      *
      * @param map 查询条件集合。
