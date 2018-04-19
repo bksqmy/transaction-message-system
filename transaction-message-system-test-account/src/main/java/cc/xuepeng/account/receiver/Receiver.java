@@ -23,8 +23,6 @@ public class Receiver {
     @RabbitHandler
     public void process(String messageBody) {
         try {
-            int i = 0;
-            System.out.println(100 / i);
             AccountInfo accountInfo = convertToAccountInfo(messageBody);
             if (accountInfoService.createAccountInfo(accountInfo)) {
                 deleleMessage(accountInfo.getOrderId());
