@@ -29,16 +29,16 @@ public class AmqpTemplateConfig {
     /**
      * 死信队列名称。
      */
-    private static final String DEAD_LETTER_QUEUE = "dead";
+    private static final String DEAD_LETTER_QUEUE = "dead-letter";
 
     @Bean
     public DirectExchange transactionMessageExchange() {
-        return new DirectExchange(DEFAULT_DIRECT_EXCHANGE, false, false);
+        return new DirectExchange(DEFAULT_DIRECT_EXCHANGE, true, false);
     }
 
     @Bean
     public Queue deadLetterQueue() {
-        return new Queue(DEAD_LETTER_QUEUE, false, false, false);
+        return new Queue(DEAD_LETTER_QUEUE, true, false, false);
     }
 
     @Bean
@@ -46,12 +46,17 @@ public class AmqpTemplateConfig {
         Map<String, Object> args = new HashMap<>();
         args.put("x-dead-letter-exchange", DEFAULT_DIRECT_EXCHANGE);
         args.put("x-dead-letter-routing-key", DEAD_LETTER_QUEUE);
-        return new Queue(ORDER_QUEUE, false, false, false, args);
+        return new Queue(ORDER_QUEUE, true, false, false, args);
     }
 
     @Bean
     public Binding tradeBinding() {
         return BindingBuilder.bind(orderQueue()).to(transactionMessageExchange()).with(ORDER_QUEUE);
+    }
+
+    @Bean
+    public Binding deadLetterBinding() {
+        return BindingBuilder.bind(deadLetterQueue()).to(transactionMessageExchange()).with(DEAD_LETTER_QUEUE);
     }
 
 }
